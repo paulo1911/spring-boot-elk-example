@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="60 seconds">
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	
+	<!-- THIS IS OUR CUSTOM CONTEXT LISTENER -->
+    <contextListener class="com.elk.example.config.logback.LoggerStartupListener"/>
+
+	<property scope="context" name="APP_NAME" value="spring-boot-app-logger-integration-test" />
+	<property name="STASH_HOST" value="${LOG_STASH_HOST}"/>
+    <property name="STASH_PORT" value="${LOG_STASH_PORT}"/>
+    <property name="HOSTNAME" value="${HOSTNAME}"/>
+
+	<appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination>${STASH_HOST}:${STASH_PORT}</destination>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"appname":"${APP_NAME}", "host":"${HOSTNAME}"}</customFields>
+		</encoder>
+	</appender>
+
+	<root level="DEBUG">
+		<appender-ref ref="stash" />
+	</root>
+</configuration>
